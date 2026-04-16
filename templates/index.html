@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloth Donation Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="hero" id="home">
+    <nav class="navbar">
+      <div class="brand">WarmWear</div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#process">Process</a>
+        <a href="#donate">Donate</a>
+        <a href="#request">Request</a>
+        <a href="{{ url_for('admin') }}">Admin</a>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="eyebrow">Python Flask Project</p>
+        <h1>Cloth Donation Management System</h1>
+        <p class="hero-copy">
+          This website connects donors, volunteers, NGOs, and needy families so clothes
+          can be donated, requested, and managed in an organized way.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#donate">Donate Now</a>
+          <a class="button secondary" href="#request">Request Clothes</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h2>Live Project Summary</h2>
+        <div class="mini-grid">
+          <article>
+            <strong>{{ donation_count }}</strong>
+            <span>Total donations</span>
+          </article>
+          <article>
+            <strong>{{ request_count }}</strong>
+            <span>Total requests</span>
+          </article>
+          <article>
+            <strong>12</strong>
+            <span>Volunteers</span>
+          </article>
+          <article>
+            <strong>8</strong>
+            <span>Partner NGOs</span>
+          </article>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section flash-wrapper">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </section>
+
+    <section class="section about" id="about">
+      <div class="section-heading">
+        <p class="eyebrow">About Project</p>
+        <h2>Purpose of the system</h2>
+      </div>
+      <div class="about-grid">
+        <article class="card info-card">
+          <h3>Collect Clothes</h3>
+          <p>Donors can submit clothing details, quantity, and pickup address using a web form.</p>
+        </article>
+        <article class="card info-card">
+          <h3>Manage Requests</h3>
+          <p>Needy families or NGOs can request clothes according to category, urgency, and number of people.</p>
+        </article>
+        <article class="card info-card">
+          <h3>Track Records</h3>
+          <p>All submissions are stored in a SQLite database and displayed in the admin panel.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section process" id="process">
+      <div class="section-heading">
+        <p class="eyebrow">Workflow</p>
+        <h2>How this Python website works</h2>
+      </div>
+      <div class="timeline">
+        <article>
+          <span>01</span>
+          <h3>Donation Entry</h3>
+          <p>The donor fills in name, mobile number, clothing type, quantity, and address.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Data Storage</h3>
+          <p>Flask receives the form data and stores it in the SQLite database.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Request Submission</h3>
+          <p>Applicants submit their needs using the request form on the same website.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3>Admin Review</h3>
+          <p>The admin page displays donation and request records for management.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section forms-section" id="donate">
+      <div class="section-heading">
+        <p class="eyebrow">Donor Form</p>
+        <h2>Donate clothes</h2>
+      </div>
+      <form class="card form-card" method="post" action="{{ url_for('donate') }}">
+        <div class="field-grid">
+          <label>
+            Full Name
+            <input type="text" name="donor_name" placeholder="Enter your name" required>
+          </label>
+          <label>
+            Mobile Number
+            <input type="tel" name="mobile" placeholder="Enter your mobile number" required>
+          </label>
+          <label>
+            Clothing Type
+            <select name="cloth_type" required>
+              <option value="">Select clothing type</option>
+              <option>Men Wear</option>
+              <option>Women Wear</option>
+              <option>Kids Wear</option>
+              <option>Winter Clothes</option>
+              <option>Blankets</option>
+            </select>
+          </label>
+          <label>
+            Quantity
+            <input type="number" name="quantity" min="1" placeholder="Enter quantity" required>
+          </label>
+          <label class="full-width">
+            Pickup Address
+            <textarea name="address" rows="4" placeholder="Enter pickup address" required></textarea>
+          </label>
+        </div>
+        <button class="button primary" type="submit">Submit Donation</button>
+      </form>
+    </section>
+
+    <section class="section forms-section alt" id="request">
+      <div class="section-heading">
+        <p class="eyebrow">Request Form</p>
+        <h2>Request clothes</h2>
+      </div>
+      <form class="card form-card" method="post" action="{{ url_for('request_clothes') }}">
+        <div class="field-grid">
+          <label>
+            Applicant Name
+            <input type="text" name="applicant_name" placeholder="Enter applicant name" required>
+          </label>
+          <label>
+            Required Category
+            <select name="category" required>
+              <option value="">Select category</option>
+              <option>Men Wear</option>
+              <option>Women Wear</option>
+              <option>Kids Wear</option>
+              <option>Winter Clothes</option>
+              <option>Mixed Clothes</option>
+            </select>
+          </label>
+          <label>
+            Number of People
+            <input type="number" name="people_count" min="1" placeholder="How many people?" required>
+          </label>
+          <label>
+            Urgency
+            <select name="urgency" required>
+              <option value="">Select urgency</option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </label>
+          <label class="full-width">
+            Address / Shelter Details
+            <textarea name="address" rows="4" placeholder="Enter address or shelter details" required></textarea>
+          </label>
+        </div>
+        <button class="button primary" type="submit">Submit Request</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
